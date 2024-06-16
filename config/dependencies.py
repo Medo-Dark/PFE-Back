@@ -1,4 +1,4 @@
-from config.database import SessionLocal, SessionLocalData
+from config.database import SessionLocal
 
 
 def get_db():
@@ -9,9 +9,4 @@ def get_db():
         db.close()
 
 
-def get_db_data():
-    db = SessionLocalData()
-    try:
-        yield db
-    finally:
-        db.close()
+

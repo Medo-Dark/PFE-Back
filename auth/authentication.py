@@ -17,6 +17,7 @@ user_repository = UserRepository()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
+
 def create_token(sett: TokenCreationSettings):
     expire = datetime.now(timezone.utc) + sett.expiry
     sett.to_encode.update({"exp": expire})
@@ -42,6 +43,7 @@ def create_reset_password_token(email: str, settings: JWTSettings):
 
 async def verify_token(sett: TokenVerificationSettings):
     try:
+
         payload = jwt.decode(
             token=sett.token,
             key=sett.key,
@@ -106,6 +108,7 @@ async def get_current_user(
     if username is None:
         raise exceptions.invalid_token
     user = user_repository.find_by_username_or_email(username=username, db=db)
+
     if user is None:
         raise exceptions.incorrect_credentials
     return user

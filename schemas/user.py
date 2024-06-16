@@ -1,50 +1,10 @@
 from datetime import timedelta
 from enum import Enum
 from typing import Optional, List
+import typing
 from pydantic import BaseModel
 
 
-class PlantBase(BaseModel):
-    name: str
-
-
-class PlantCreate(PlantBase):
-    pass
-
-
-class Plant(PlantBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
-class AssignedPlant(BaseModel):
-    plant_name: str
-    user_id: int
-
-
-############################################################
-
-
-class DepartmentBase(BaseModel):
-    name: str
-
-
-class AssignedDepartment(BaseModel):
-    department_name: str
-    user_id: int
-
-
-class DepartmentCreate(DepartmentBase):
-    pass
-
-
-class Department(DepartmentBase):
-    id: int
-
-    class Config:
-        from_attributes = True
 
 
 ############################################################
@@ -55,18 +15,9 @@ class UserEmail(BaseModel):
         from_attributes = True
 
 
-class TeamInUser(BaseModel):
-    id: int
-    name: str
-    users: List[UserEmail]
-
-    class Config:
-        from_attributes = True
-
 class RolesEnum(str, Enum):
-    SUPERVISEUR = 'Superviseur'
-    MANAGER = 'Manager'
-    ZONE_LEADER = 'Zone leader'
+    REQUESTOR = 'Requestor'
+    BUYER = 'Buyer'
     ADMIN = 'Admin'
 
 
@@ -93,50 +44,17 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
 
 
-class UserDepartment(UserBase):
-    departments: List[str]
-    plants: List[str]
-    password: str
-
 
 class User(UserBase):
     id: int
-    departments: List[Department]
-    plants: List[Plant]
-    teams: List[TeamInUser]
-
-    class Config:
-        from_attributes = True
 
 
-class UserInDepartment(BaseModel):
-    id: int
-    username: str
-    role: RolesEnum
-
-    class Config:
-        from_attributes = True
+class UserInPut(UserBase):
+    id: Optional[int] = 0
+    password:str
 
 
-class UserPlantDepartment(BaseModel):
-    plant: str
-    departments: List[str]
 
-class UserInTeam(BaseModel):
-    username: str
-    role: RolesEnum
-
-    class Config:
-        from_attributes = True
-
-############################################################
-
-class DepartmentUsers(DepartmentBase):
-    id: int
-    users: List[UserInDepartment]
-
-    class Config:
-        from_attributes = True
 
 
 class RefreshToken(BaseModel):
@@ -151,7 +69,7 @@ class Token(BaseModel):
 
 
 class TokenCreationSettings(BaseModel):
-    to_encode: any
+    to_encode: typing.Any
     key: str
     expiry: timedelta
     algorithm: str
@@ -184,35 +102,3 @@ class ResetPasswordRequest(BaseModel):
     new_password: str
     confirm_password: str
 
-
-############################################################
-
-class TeamBase(BaseModel):
-    name: str
-
-
-class Team(BaseModel):
-    id: int
-    name: str
-    users: List[UserInTeam]
-
-    class Config:
-        from_attributes = True
-
-
-class TeamInDb(TeamBase):
-    id: int
-    created_at: Optional[str]
-    updated_at: Optional[str]
-
-
-class AppendToTeam(BaseModel):
-    teams_id: List[int]
-    users_id: List[int]
-
-    class Config:
-        from_attributes = True
-
-class TeamUserDelete(BaseModel):
-    team_id: int
-    username: str

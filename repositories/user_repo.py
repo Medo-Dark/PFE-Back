@@ -4,8 +4,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from repositories.crud_repo import CRUDRepository
-from models.user import Team, User
-from schemas.user import TeamUserDelete
+from models.user import  User
 
 
 class UserRepository(CRUDRepository):
@@ -35,37 +34,12 @@ class UserRepository(CRUDRepository):
         db.commit()
         return user
     
-    def get_users_by_plant_and_departments(self, db: Session, plant: str, departments: List[str]):
-        users: List[User] = db.query(self.model).filter(
-            self.model.plants.any(name=plant),
-            or_(*(self.model.departments.any(name=department) for department in departments))
-        ).all()
-        return users
-
-    def append_to_team(self, users_ids: List[int], teams_ids: List[int], db: Session):
-        for user_id in users_ids:
-            user: User = db.query(User).filter(User.id == user_id).first()
-            if not user:
-                continue  # Skip if the user is not found
-            for team_id in teams_ids:
-                team: Team = db.query(Team).filter(Team.id == team_id).first()
-                if team and team not in user.teams:
-                    user.teams.append(team)
-        db.commit()
-        return True
-    
-    def remove_users_from_teams(self, data: List[TeamUserDelete], db: Session):
-        for item in data:
-            user: User = db.query(User).filter(User.username == item.username).first()
-            if not user:
-                continue
-            team: Team = db.query(Team).filter(Team.id == item.team_id).first()
-            if not team:
-                continue
-            user.teams.remove(team)
-        db.commit()
-        return True
-    
-        
-
+    # def get_users_by_plant_and_departments(self, db: Session, plant: str, departments: List[str]):
+    #     users: List[User] = db.query(self.model).filter(
+    #         self.model.plants.any(name=plant),
+    #         or_(*(self.model.departments.any(name=department) for department in departments))
+    #     ).all()
+    #     return users
+    #
+    #
 

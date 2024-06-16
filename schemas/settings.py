@@ -23,7 +23,6 @@ class Settings(BaseSettings):
     APP_PORT: int
     APP_FRONT_PORT: int
     DB_URL: str
-    DB_DATA_URL: str
     JWT: JWTSettings
     MAIL: MailSettings
     FORGET_PASSWORD_LINK_EXPIRE_MINUTES: int

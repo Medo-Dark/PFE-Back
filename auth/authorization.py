@@ -24,7 +24,7 @@ def get_allowed_roles(request: Request):
         allowed_roles = [RolesEnum.ADMIN]
 
     if path == 'users/me' or path == 'users/{resource_id}':
-        allowed_roles = [RolesEnum.ADMIN, RolesEnum.SUPERVISEUR, RolesEnum.MANAGER, RolesEnum.ZONE_LEADER]
+        allowed_roles = [RolesEnum.ADMIN, RolesEnum.REQUESTOR, RolesEnum.BUYER]
 
     # if path.startswith('users'):
     #     allowed_roles.append(RolesEnum.ADMIN)

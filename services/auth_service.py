@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, status, BackgroundTasks, HTTPException
+from fastapi import Depends, APIRouter, status, BackgroundTasks
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from auth.authentication import verify_token, generate_tokens, create_reset_password_token, \
@@ -8,24 +8,21 @@ from consts import static_exceptions as exceptions
 from auth.dependencies import get_user_to_save, get_authenticated_user
 from config.settings import Settings, get_settings
 from config.dependencies import get_db
-from repositories.department_repo import DepartmentRepository
-from repositories.plant_repo import PlantRepository
 from repositories.user_repo import UserRepository
 from schemas.response import Response
-from schemas.user import (User, Token, TokenVerificationSettings, ForgetPasswordRequest,
+from schemas.user import (User,UserInPut , Token, TokenVerificationSettings, ForgetPasswordRequest,
                           ResetPasswordTokenVerificationRequest, ResetPasswordRequest,
-                          AssignedDepartment, UserDepartment, AssignedPlant)
+                          )
 from utils.mailer import format_template
 
 user_repository = UserRepository()
-department_repository = DepartmentRepository()
-plant_repository = PlantRepository()
+
 router = APIRouter(prefix='/auth', tags=['Auth'])
 
 
 # Register A User
-@router.post('/register', status_code=status.HTTP_201_CREATED, response_model=Response[User])
-async def register(user: UserDepartment = Depends(get_user_to_save),
+@router.post('/register', status_code=status.HTTP_201_CREATED, response_model=User)
+async def register(user: UserInPut = Depends(get_user_to_save),
                    db: Session = Depends(get_db)):
     if not user:
         raise exceptions.credentials_already_taken
@@ -33,30 +30,16 @@ async def register(user: UserDepartment = Depends(get_user_to_save),
     try:
         db.begin()
         saved_user: User = user_repository.insert_line(data=userindb, db=db)
-        for plant in user.plants:
-            user_plant: AssignedPlant = AssignedPlant(plant_name=plant, user_id=saved_user.id)
-            plant_repository.assign_plant_to_user(
-                assigned_plant=user_plant,
-                user_repository=user_repository,
-                db=db
-            )
-        for department in user.departments:
-            user_department: AssignedDepartment = AssignedDepartment(department_name=department, user_id=saved_user.id)
-            department_repository.assign_department_to_user(
-                assigned_department=user_department,
-                user_repository=user_repository,
-                db=db
-            )
+        print("----------------------------------",saved_user)
+
 
     except SQLAlchemyError:
         db.rollback()
         raise exceptions.transaction_failed
     else:
         db.commit()
-        return Response[User](
-            status_code=status.HTTP_201_CREATED,
-            data=saved_user
-        )
+        return saved_user
+
 
 
 # Login
@@ -71,6 +54,7 @@ async def login_for_tokens(
         raise exceptions.account_not_approved
 
     access_token, refresh_token = generate_tokens(user=authenticated_user, settings=settings.JWT)
+    print(access_token,"----------------------------------------",refresh_token,"=====================================")
 
     return Response[Token](
         data=Token(
