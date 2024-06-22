@@ -20,6 +20,7 @@ class Request(Base):
 
     requestor = relationship('User', foreign_keys=[requestor_id], back_populates='requests_made')
     buyer = relationship('User', foreign_keys=[buyer_id], back_populates='requests_received')
-    items = relationship('Item', back_populates='request', cascade='all, delete-orphan')
+    request_items = relationship('RequestItem', back_populates='request')
+    
 
 

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.staticfiles import StaticFiles
 import orjson
 import typing
 from fastapi.responses import JSONResponse
@@ -9,6 +10,8 @@ from services.auth_service import router as auth_router
 from services.request_service import router as req_router
 from services.item_service import router as itm_router
 from services.supplier_service import router as supp_router
+from services.purchase_service import router as purch_router
+
 
 from services.tst import router as tst_router
 
@@ -32,6 +35,7 @@ app.include_router(router=tst_router)
 app.include_router(router=req_router)
 app.include_router(router=itm_router)
 app.include_router(router=supp_router)
+app.include_router(router=purch_router)
 
 
 # CORS middleware
@@ -42,3 +46,7 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+
+app.mount('/files', StaticFiles(directory='files'),'files')
+

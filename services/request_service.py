@@ -4,6 +4,7 @@ from fastapi import Depends ,APIRouter, HTTPException
 from sqlalchemy.orm import Session
 
 import models.request as models
+from schemas.item import ItemCreate
 import schemas.request as schemas
 from config.dependencies import get_db
 from consts.custom_exceptions import CustomHTTPException
@@ -13,7 +14,7 @@ from schemas.response import Response
 import models.user as modelsUser
 from sqlalchemy.exc import SQLAlchemyError
 from services.base_service import BaseRouter
-from models.item import Item
+from models.item import Item, RequestItem
 from schemas.user import User
 
 req_repository = RequestRepository()
@@ -46,20 +47,32 @@ class RequestRouter(BaseRouter[models.Request, schemas.Request]):
                 db.commit()
                 db.refresh(db_request)
                 print("-----------HALO-------------------------",db_request.id)
-                # Add items to the request
-                for item in request.items:
-                    db_item = Item(
-                        name=item.name,
-                        quantity=item.quantity,
-                        request_id=db_request.id
-                    )
-                    db.add(db_item)
 
-                    
+                # Add items to the request
+                # Handle items
+                for item in request.items:
+                    # Check if the item already exists
+                    db_item = db.query(Item).filter(Item.name == item.name).first()
+                    if not db_item:
+                        # Create a new item if it doesn't exist
+                        db_item = Item(name=item.name)
+                        db.add(db_item)
+                        db.commit()
+                        db.refresh(db_item)
+
+                    # Link the item to the request with quantity
+                    db_request_item = RequestItem(
+                        request_id=db_request.id,
+                        item_id=db_item.id,
+                        quantity=item.quantity
+                    )
+                    db.add(db_request_item)
+
+
                 db.commit()
                 db.refresh(db_request)
                 
-                print('-----------------------2------------------------------')
+                print('-----------------------2------------------------------',db_request)
                 
                 return db_request
             except SQLAlchemyError as e:

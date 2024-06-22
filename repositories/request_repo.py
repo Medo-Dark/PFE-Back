@@ -7,6 +7,8 @@ from repositories.crud_repo import CRUDRepository
 from models.request import  Request
 from models.item import  Item
 from models.supplier import  Supplier
+from models.purchase import  Purchase
+
 
 
 class RequestRepository(CRUDRepository):
@@ -22,4 +24,9 @@ class ItemRepository(CRUDRepository):
 class SupplierRepository(CRUDRepository):
     def __init__(self) -> None:
         super().__init__(Supplier)
+
+
+class PurchaseRepository(CRUDRepository):
+    def __init__(self) -> None:
+        super().__init__(Purchase)
 

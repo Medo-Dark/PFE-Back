@@ -19,3 +19,4 @@ class User(Base):
 
     requests_made = relationship('Request', foreign_keys=Request.requestor_id, back_populates='requestor')
     requests_received = relationship('Request', foreign_keys=Request.buyer_id, back_populates='buyer')
+    purchases = relationship('Purchase', back_populates='buyer')

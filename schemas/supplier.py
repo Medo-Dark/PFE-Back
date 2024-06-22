@@ -1,25 +1,37 @@
-from typing import List, Optional
+# app/schemas/supplier.py
 from pydantic import BaseModel
+from typing import List, Optional
+
+class ItemBase(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        from_attributes = True
+
+class SupplierItemBase(BaseModel):
+    price: int
+
+class SupplierItemCreate(SupplierItemBase):
+    item_id: int
+
+
+class SupplierItemOut(SupplierItemBase):
+    item: ItemBase
+
+    class Config:
+        from_attributes = True
 
 class SupplierBase(BaseModel):
     name: str
-    contact_info: str = None
-
+    contact_info: str
 
 class SupplierCreate(SupplierBase):
     pass
 
-class SupplierItem(SupplierBase):
+class SupplierOut(SupplierBase):
     id: int
-    
+    supplier_items: List[SupplierItemOut] = None
+
     class Config:
         from_attributes = True
-
-class Supplier(SupplierBase):
-    id: int
-    # items2: List['Item']
-    
-    class Config:
-        from_attributes = True
-
-# from .item import Item
