@@ -1,6 +1,7 @@
-from typing import Annotated
+import shutil
+from typing import Annotated, Optional
 
-from fastapi import Depends
+from fastapi import Depends, File, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -8,8 +9,26 @@ from auth.authentication import get_password_hash, verify_password
 from config.dependencies import get_db
 from repositories.user_repo import UserRepository
 from schemas.user import UserInDb, UserInPut
+from schemas.request import RequestBase, RequestCreate
 
 user_repository = UserRepository()
+
+
+def upload_File(uploaded_file: UploadFile = File(...)):
+            print('----------------')
+            if uploaded_file is None:
+                return None  
+
+            print('-------1--------')
+            path = f"files/{uploaded_file.filename}"
+            with open(path, 'wb') as file:
+                shutil.copyfileobj(uploaded_file.file, file)
+            
+            return {
+                'file': uploaded_file.filename,
+                'content': uploaded_file.content_type,
+                'path': path,
+            }
 
 
 def get_user_to_save(user: UserInPut, db: Session = Depends(get_db)):
@@ -45,6 +64,9 @@ def get_authenticated_user(login_req: Annotated[OAuth2PasswordRequestForm, Depen
     if not verify_password(login_req.password, found_user.hashed_password):
         return False
     return found_user
+
+
+
 
 #
 # async def upload_files(situationok: List[UploadFile], situationko: List[UploadFile], securisation: List[UploadFile]):

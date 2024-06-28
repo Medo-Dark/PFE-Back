@@ -1,11 +1,12 @@
 # app/schemas/item.py
+from fastapi import UploadFile
 from pydantic import BaseModel
 from typing import List, Optional
 
 from .supplier import SupplierBase
 
 class SupplierItemBase(BaseModel):
-    price: int
+    price: int = None
     supplier_id: int
 
 
@@ -25,9 +26,20 @@ class SupplierItemOut(SupplierItemBase):
     class Config:
         from_attributes = True
 
+class SupplierItemPurch(SupplierItemBase):
+    supplier: SupplierBase
+    purchasing:bool
+
+    class Config:
+        from_attributes = True
+
 
 class ItemBase(BaseModel):
-    name: str
+    part_number: str
+    isDrg :bool = False
+    image : Optional[str] = None
+    DwgTitle  :str
+    DWG_REV :str
 
 class ItemCreate(ItemBase):
     quantity: int
@@ -35,6 +47,20 @@ class ItemCreate(ItemBase):
 class Item(ItemBase):
     id: int
     supplier_items: List[SupplierItemOut] = None
+
+    class Config:
+        from_attributes = True
+
+class ItemOut(ItemBase):
+    id: int
+    quantity:int = 0 
+
+    class Config:
+        from_attributes = True
+
+class ItemPurch(ItemBase):
+    id: int
+    supplier_items: List[SupplierItemPurch] = None
 
     class Config:
         from_attributes = True

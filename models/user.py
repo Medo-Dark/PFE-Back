@@ -13,6 +13,10 @@ class User(Base):
         Enum('Buyer', 'Requestor', 'Admin', name='roles_enum'),
         nullable=False
     )
+    commodity = Column(
+        Enum('Spare Parts', 'Opex', 'Capex', name='commo_enum'),
+        nullable=True
+    )
     account_status = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())

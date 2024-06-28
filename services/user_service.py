@@ -28,16 +28,17 @@ class UserRouter(BaseRouter[models.User, schemas.User]):
                 return Response(
                     message='Approved successfully'
                 )
-
-        @self.router.post('/users-to-notify', response_model=List[dict], response_model_exclude_unset=True)
-        async def get_users_to_notify(data: schemas.User, db: Session = Depends(get_db)):
-
-            users = user_repository.get_users_by_plant_and_departments(db, data.plant, data.departments)
-            if not users:
-                raise CustomHTTPException.item_not_found('users')
+        
+        @self.router.get(path='/Buyer/Commodity/{Commodity}', response_model=List[schemas.User])
+        async def get_Buyer_by_commodity(Commodity: str, db: Session = Depends(get_db)):
+            db_buyers :schemas.User = db.query(models.User).filter(models.User.commodity == Commodity, models.User.role.in_(['Buyer', 'Admin'])).all()
+            print(db_buyers)
+            if not db_buyers:
+                raise CustomHTTPException.item_not_found('user')
             else:
-                users_data = [{"username": user.username, "email": user.email} for user in users]
-                return users_data
+                return db_buyers
+
+       
 
         @self.router.patch("/{resource_id}", response_model=Response[responseType])
         async def update_item_by_id(resource_id: int, item: schemas.UserUpdate, db: Session = Depends(get_db)):

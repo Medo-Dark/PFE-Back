@@ -26,6 +26,7 @@ class UserBase(BaseModel):
     email: str
     role: RolesEnum
     account_status: Optional[bool] = False
+    commodity : Optional[str] = None
 
 
 class UserInDb(UserBase):

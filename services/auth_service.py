@@ -29,7 +29,7 @@ async def register(user: UserInPut = Depends(get_user_to_save),
     userindb, user = user
     try:
         db.begin()
-        saved_user: User = user_repository.insert_line(data=userindb, db=db)
+        saved_user: User = user_repository.insert_line( db=db  , data=userindb)
         print("----------------------------------",saved_user)
 
 

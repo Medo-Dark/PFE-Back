@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, String, ForeignKey, func
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, ForeignKey, func
 from sqlalchemy.orm import relationship
 from config.database import Base
 
@@ -20,6 +20,7 @@ class Purchase(Base):
     id = Column(Integer, primary_key=True, index=True)
     buyer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable=False)
+    done = Column(Boolean, default=False)
     created_at = Column(DateTime, default=func.now())
 
     supplier = relationship('Supplier', back_populates='purchases')

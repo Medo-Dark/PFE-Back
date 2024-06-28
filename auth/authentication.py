@@ -65,6 +65,7 @@ def generate_tokens(user: User, settings: JWTSettings):
         "sub": user.username,
         'role': user.role,
         'email': user.email,
+        'id':   user.id
     }
 
     access_token_sett = TokenCreationSettings(

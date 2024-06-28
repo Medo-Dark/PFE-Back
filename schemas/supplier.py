@@ -3,8 +3,11 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class ItemBase(BaseModel):
-    id: int
-    name: str
+    part_number: str
+    isDrg :bool
+    image : Optional[str] = None
+    DwgTitle  :str
+    DWG_REV :str
 
     class Config:
         from_attributes = True
@@ -25,6 +28,7 @@ class SupplierItemOut(SupplierItemBase):
 class SupplierBase(BaseModel):
     name: str
     contact_info: str
+
 
 class SupplierCreate(SupplierBase):
     pass

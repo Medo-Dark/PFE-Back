@@ -4,6 +4,7 @@ import orjson
 import typing
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import func, text
 from config.database import engine, Base
 from services.user_service import router as user_router
 from services.auth_service import router as auth_router
@@ -14,7 +15,6 @@ from services.purchase_service import router as purch_router
 
 
 from services.tst import router as tst_router
-
 
 
 class ORJSONResponse(JSONResponse):
